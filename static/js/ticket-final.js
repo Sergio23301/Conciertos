@@ -261,16 +261,7 @@ function mostrarMensaje(el, msg, tipo) {
 // SESIÓN — aplicar, cerrar, botón pago
 // ============================================
 function aplicarLogin(datos) {
-    usuarioActual = datos;
-    guardarSesion(datos);
-    document.getElementById('estado-invitado').style.display = 'none';
-    document.getElementById('estado-usuario').style.display  = 'flex';
-    document.getElementById('saludo-usuario').textContent    = `👋 ${datos.nombre}`;
-    document.getElementById('badge-rol').textContent         = datos.rol || 'Usuario';
-    actualizarBotonPago();
-    cerrarModalLogin();
-    mostrarToast(`¡Bienvenido, ${datos.nombre}! 🎟`, 'exito');
-}
+
 
 function cerrarSesion() {
     usuarioActual = null;
