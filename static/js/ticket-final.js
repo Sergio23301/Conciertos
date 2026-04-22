@@ -519,7 +519,7 @@ if (btnVolver) {
 // PASO D — CONFIRMAR PAGO (MODAL AMARILLO + JAVA + DJANGO)
 // ============================================
 
-// 1. EL BOTÓN VERDE: Ahora solo abre el modal amarillo
+// 1. EL BOTÓN VERDE: Abre el modal y calcula el total
 document.getElementById('btn-confirmar-pago').addEventListener('click', () => {
     const asientosMarcados = document.querySelectorAll('.asiento.seleccionado');
 
@@ -532,14 +532,14 @@ document.getElementById('btn-confirmar-pago').addEventListener('click', () => {
     const totalVenta = asientosMarcados.length * PRECIO_BOLETO;
     document.getElementById('pago-total-monto').textContent = `$${totalVenta.toLocaleString('es-MX')}`;
     
-    // MOSTRAMOS TU MODAL AMARILLO (Sin ventanas grises)
+    // Mostramos el modal de pago
     document.getElementById('overlay-pago').classList.remove('oculto');
 });
 
-// 2. EL BOTÓN DEL MODAL AMARILLO: Aquí sucede la magia real
+// 2. EL BOTÓN DEL MODAL AMARILLO: Proceso de compra y envío de ticket
 document.getElementById('btn-pagar-ahora').addEventListener('click', async () => {
     
-    // Leemos los datos de los cuadritos amarillos
+    // Validación de campos de tarjeta
     const tarjeta = document.getElementById('input-tarjeta').value;
     const exp = document.getElementById('input-exp').value;
     const cvc = document.getElementById('input-cvc').value;
@@ -549,7 +549,7 @@ document.getElementById('btn-pagar-ahora').addEventListener('click', async () =>
         return;
     }
 
-    // Cerramos el modal para empezar el proceso
+    // Cerramos el modal e iniciamos carga
     document.getElementById('overlay-pago').classList.add('oculto');
     mostrarToast("💳 Procesando pago...", "exito");
 
@@ -560,7 +560,8 @@ document.getElementById('btn-pagar-ahora').addEventListener('click', async () =>
     const asientosMarcados = document.querySelectorAll('.asiento.seleccionado');
 
     try {
-        // --- 1. REGISTRO EN JAVA (8080) ---
+        // --- 1. REGISTRO EN JAVA (Puerto 8081) ---
+        // Registramos cada asiento seleccionado en la base de datos de Java
         for (let asientoEl of asientosMarcados) {
             const idAsiento = asientoEl.getAttribute('data-id');
             const res = await fetch(API_JAVA, {
@@ -581,14 +582,15 @@ document.getElementById('btn-pagar-ahora').addEventListener('click', async () =>
             }
         }
 
-        // --- 2. ENVÍO DE CORREO EN DJANGO (8000) ---
+        // --- 2. ENVÍO DE CORREO EN DJANGO (Puerto 8000) ---
+        // Solo llegamos aquí si Java confirmó la compra de todos los asientos
         try {
             await fetch(API_TICKET, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     nombre:   usuarioActual.nombre,
-                    email:    usuarioActual.email || 'sergio@ejemplo.com',
+                    email:    usuarioActual.email || 'sergio@ejemplo.com', 
                     artista:  conciertoActual.artista.nombre,
                     cantidad: asientosMarcados.length, 
                     asiento:  Array.from(asientosMarcados).map(a => a.getAttribute('data-id')).join(', '),
@@ -597,9 +599,9 @@ document.getElementById('btn-pagar-ahora').addEventListener('click', async () =>
                     fecha:    new Date(conciertoActual.fecha).toLocaleDateString()
                 })
             });
-            console.log("📧 Ticket enviado satisfactoriamente");
+            console.log("📧 Ticket enviado satisfactoriamente a:", usuarioActual.email);
         } catch (e) {
-            console.warn("⚠️ No se pudo enviar el correo, pero la compra fue exitosa.");
+            console.warn("⚠️ Compra guardada, pero hubo un error con el servicio de correo de Django.");
         }
 
         // --- 3. ACTUALIZACIÓN VISUAL ---
@@ -615,7 +617,7 @@ document.getElementById('btn-pagar-ahora').addEventListener('click', async () =>
         mostrarToast(`¡Compra exitosa! Revisa tu correo 🎟`, 'exito');
         
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error durante la compra:', error);
         mostrarToast(error.message, 'error');
     } finally {
         btn.textContent = 'Confirmar pago';
