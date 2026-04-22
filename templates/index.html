@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicketLive — Conciertos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=555">
+</head>
+<body>
+
+
+    <!-- NAVBAR DE USUARIO -->
+   <nav id="navbar-usuario" aria-label="Sesión de usuario" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; position: absolute; width: 100%; top: 0; z-index: 1000;">
+    <div id="navbar-logo" style="font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: white;">🎟 TicketLive</div>
+    <div id="navbar-auth">
+        <div id="estado-invitado" style="display: flex; align-items: center; gap: 15px; color: white;">
+            <span id="invitado-label">¿Tienes cuenta?</span>
+            <button id="btn-abrir-login" aria-haspopup="dialog" style="background: #ffc107; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; color: black;">Iniciar sesión</button>
+        </div>
+        <div id="estado-usuario" style="display:none;" aria-live="polite">
+            <span id="saludo-usuario"></span>
+            <span id="badge-rol"></span>
+            <button id="btn-logout" aria-label="Cerrar sesión">Salir</button>
+        </div>
+    </div>
+</nav>
+
+    <!-- MODAL DE LOGIN / REGISTRO -->
+    <div id="overlay-login" role="dialog" aria-modal="true" aria-labelledby="auth-titulo" style="display:none;">
+        <div id="modal-login">
+            <button id="btn-cerrar-modal" aria-label="Cerrar modal">✕</button>
+            <div id="login-icono" aria-hidden="true">🎟</div>
+
+            <!-- PESTAÑAS -->
+            <div id="tabs-auth" role="tablist" aria-label="Modo de acceso">
+                <button id="tab-login"    role="tab" aria-selected="true"  aria-controls="panel-login">    Iniciar sesión</button>
+                <button id="tab-registro" role="tab" aria-selected="false" aria-controls="panel-registro">Crear cuenta</button>
+            </div>
+
+            <!-- PANEL: LOGIN -->
+            <div id="panel-login" role="tabpanel" aria-labelledby="tab-login">
+                <p class="auth-subtitulo">Conecta con el microservicio de autenticación</p>
+                <div class="campo-grupo">
+                    <label for="login-usuario">Usuario</label>
+                    <input type="text" id="login-usuario" placeholder="ej. sergio" autocomplete="username">
+                </div>
+                <div class="campo-grupo">
+                    <label for="login-password">Contraseña</label>
+                    <div class="input-password-wrap">
+                        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+                        <button type="button" class="btn-toggle-pass" aria-label="Mostrar contraseña" tabindex="-1">👁</button>
+                    </div>
+                </div>
+                <div id="login-error" class="auth-error" role="alert" style="display:none;"></div>
+                <button id="btn-submit-login" class="btn-auth-submit">
+                    <span class="auth-btn-texto">Entrar al sistema</span>
+                    <span class="auth-spinner" style="display:none;" aria-hidden="true">⟳</span>
+                </button>
+            </div>
+
+            <!-- PANEL: REGISTRO -->
+            <div id="panel-registro" role="tabpanel" aria-labelledby="tab-registro" style="display:none;">
+                <p class="auth-subtitulo">Crea tu cuenta nueva en TicketLive</p>
+                <div class="campo-grupo">
+                    <label for="reg-nombre">Nombre completo</label>
+                    <input type="text" id="reg-nombre" placeholder="ej. Sergio García" autocomplete="name">
+                </div>
+                <div class="campo-grupo">
+                    <label for="reg-usuario">Nombre de usuario</label>
+                    <input type="text" id="reg-usuario" placeholder="ej. sergio123" autocomplete="username">
+                </div>
+                <div class="campo-grupo">
+                    <label for="reg-email">Correo electrónico</label>
+                    <input type="email" id="reg-email" placeholder="ej. sergio@live.mx" autocomplete="email">
+                </div>
+                <div class="campo-grupo">
+                    <label for="reg-password">Contraseña</label>
+                    <div class="input-password-wrap">
+                        <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+                        <button type="button" class="btn-toggle-pass" aria-label="Mostrar contraseña" tabindex="-1">👁</button>
+                    </div>
+                </div>
+                <div id="reg-error"  class="auth-error"   role="alert"  style="display:none;"></div>
+                <div id="reg-exito"  class="auth-success" role="status" style="display:none;"></div>
+                <button id="btn-submit-registro" class="btn-auth-submit">
+                    <span class="auth-btn-texto">Crear cuenta</span>
+                    <span class="auth-spinner" style="display:none;" aria-hidden="true">⟳</span>
+                </button>
+            </div>
+
+            <!-- Indicador microservicio -->
+            <div id="ms-indicador">
+                <span id="ms-dot"></span>
+                <span id="ms-label">Microservicio Auth · Django (8000)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- PASO 1: HERO -->
+    <section id="seccion-hero">
+        <div class="hero-content">
+            <span class="hero-label">Temporada 2026</span>
+            <h1>Vive la<br><em>música</em><br>en vivo.</h1>
+            <p class="hero-sub">Los mejores artistas. Los mejores recintos.</p>
+            <button id="btn-explorar" onclick="document.getElementById('seccion-cartelera').scrollIntoView({behavior:'smooth'})">
+                Explorar eventos ↓
+            </button>
+        </div>
+        <div class="hero-deco" aria-hidden="true">
+            <div class="circulo c1"></div>
+            <div class="circulo c2"></div>
+            <div class="circulo c3"></div>
+        </div>
+    </section>
+
+   <section id="seccion-cartelera" style="margin-top: 100px;">
+        <div class="seccion-header">
+            <h2>Cartelera</h2>
+            <span id="total-eventos" class="badge-eventos"></span>
+        </div>
+        <div id="lista-conciertos">
+            <div class="estado-carga">
+                <div class="spinner" aria-hidden="true"></div>
+                <p>Conectando con el servidor...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PASO 3: MAPA DE ASIENTOS -->
+    <section id="seccion-mapa" style="display: none;" aria-live="polite">
+       <button id="btn-volver">← Volver a la cartelera</button>
+
+        <div id="info-evento-seleccionado">
+            <h2 id="mapa-artista"></h2>
+            <p id="mapa-detalles"></p>
+        </div>
+
+        <div class="leyenda">
+            <span class="leyenda-item"><span class="muestra libre"></span> Disponible</span>
+            <span class="leyenda-item"><span class="muestra seleccionado"></span> Seleccionado</span>
+            <span class="leyenda-item"><span class="muestra ocupado"></span> Ocupado</span>
+        </div>
+
+        <div class="escenario-label" aria-label="Escenario">▬ ESCENARIO ▬</div>
+        <div id="cuadricula-asientos" role="group" aria-label="Mapa de asientos"></div>
+
+        <!-- TICKET -->
+       <div id="ticket-resumen" style="display: none; border-top: 2px dashed #ccc; padding-top: 20px; margin-top: 20px;">
+    <div class="ticket-linea">
+        <span>Evento</span><strong id="ticket-evento"></strong>
+    </div>
+    <div class="ticket-linea">
+        <span>Recinto</span><strong id="ticket-recinto"></strong>
+    </div>
+    <div class="ticket-linea">
+        <span>Boletos seleccionados</span><strong id="ticket-cantidad">0</strong>
+    </div>
+    <div class="ticket-linea total">
+        <span>Total estimado</span><strong id="ticket-total">$0</strong>
+    </div>
+    <p id="limite-msg" style="color: #ff4757; font-size: 0.8rem; display: none;">* Máximo 8 boletos permitidos</p>
+    <button id="btn-confirmar-pago" disabled style="width: 100%; padding: 15px; background: #2ed573; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+        🔒 Inicia sesión para comprar
+    </button>
+    <p id="pago-hint-login">
+        <button id="btn-pago-login-link">Iniciar sesión</button> para habilitar el pago
+    </p>
+</div>
+    </section>
+
+
+
+    <div id="overlay-pago" class="oculto">
+    <div id="modal-pago">
+        <button id="btn-cerrar-pago-modal">×</button>
+        <div class="pago-header">
+            <span id="pago-icono">💳</span>
+            <h2>Finalizar Compra</h2>
+            <p class="pago-subtitulo">Introduce los datos de tu tarjeta para procesar el pago de tus boletos.</p>
+        </div>
+
+        <div class="pago-cuerpo">
+            <div class="campo-grupo">
+                <label>Número de Tarjeta</label>
+                <input type="text" id="input-tarjeta" placeholder="0000 0000 0000 0000" maxlength="16">
+            </div>
+            <div class="fila-pago">
+                <div class="campo-grupo">
+                    <label>Vencimiento</label>
+                    <input type="text" id="input-exp" placeholder="MM/AA" maxlength="5">
+                </div>
+                <div class="campo-grupo">
+                    <label>CVC</label>
+                    <input type="password" id="input-cvc" placeholder="123" maxlength="3">
+                </div>
+            </div>
+            
+            <div class="pago-resumen">
+                <span>Total a pagar:</span>
+                <strong id="pago-total-monto">$0.00</strong>
+            </div>
+
+            <button id="btn-pagar-ahora" class="btn-auth-submit">
+                Pagar y Generar Boletos
+            </button>
+        </div>
+    </div>
+</div>
+
+</div> <script src="/static/js/ticket-final.js?v=2"></script>
+</body>
+
+
+
+</html>
