@@ -118,7 +118,7 @@ JAZZMIN_SETTINGS = {
     "site_brand": "TicketLive Management",
     "welcome_sign": "Bienvenido al Panel de Control de TicketLive",
     "copyright": "Sergio Eduardo Dominguez Trejo",
-    "search_model": ["eventos.Concierto"],
+    "search_model": "eventos.Concierto",
     "show_ui_builder": True,
     
     "icons": {
