@@ -134,12 +134,14 @@ async function loginUsuario() {
 
         if (!res.ok) throw new Error('Credenciales incorrectas.');
 
-        const datos = await res.json();
-        aplicarLogin({
-            nombre: datos.nombre || username,
-            rol: datos.rol || 'Usuario',
-            token: datos.token || null
-        });
+        // Dentro de loginUsuario()
+const datos = await res.json();
+aplicarLogin({
+    nombre: datos.nombre || username,
+    rol: datos.rol || 'Usuario',
+    email: datos.email || '', // <--- Asegúrate de que esto se incluya aquí también
+    token: datos.token || null
+});
 
     } catch (err) {
         console.warn('Modo demo activo...');
