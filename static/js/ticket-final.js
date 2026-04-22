@@ -1,12 +1,13 @@
 // ============================================
 // CONFIGURACIÓN — URLs de tus microservicios
 // ============================================
-const API_DJANGO      = 'http://127.0.0.1:8000/api/conciertos/';
-const API_AUTH_LOGIN  = 'http://127.0.0.1:8000/api/auth/login/';
-const API_AUTH_REG    = 'http://127.0.0.1:8000/api/auth/registro/';
-const API_JAVA        = 'http://127.0.0.1:8080/api/boletos/comprar';
-const API_OCUPADOS    = 'http://127.0.0.1:8080/api/boletos/ocupados';
-const API_TICKET      = 'http://127.0.0.1:8000/api/enviar-ticket/';
+// ============================================
+const API_DJANGO      = 'http://143.244.157.234:8000/api/conciertos/';
+const API_AUTH_LOGIN  = 'http://143.244.157.234:8000/api/auth/login/';
+const API_AUTH_REG    = 'http://143.244.157.234:8000/api/auth/registro/';
+const API_JAVA        = 'http://143.244.157.234:8081/api/boletos/comprar';
+const API_OCUPADOS    = 'http://143.244.157.234:8081/api/boletos/ocupados';
+const API_TICKET      = 'http://143.244.157.234:8000/api/enviar-ticket/';
 const PRECIO_BOLETO   = 850;
 
 // ============================================
