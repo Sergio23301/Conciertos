@@ -117,7 +117,7 @@ async function loginUsuario() {
         
         // Usamos location.assign para forzar el cambio de puerto
         setTimeout(() => {
-            window.location.assign("http://127.0.0.1:8000/admin/");
+            window.location.assign("http://143.244.157.234:8000/admin/");
         }, 1000);
         return; 
     }
